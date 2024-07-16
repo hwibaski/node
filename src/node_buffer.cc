@@ -1222,8 +1222,11 @@ void SetBufferPrototype(const FunctionCallbackInfo<Value>& args) {
   realm->set_buffer_prototype_object(proto);
 }
 
+// FunctionCallbackInfo<Value>& args 매개변수를 통해 JavaScript에서 전달된 인자들을 받습니다.
 void GetZeroFillToggle(const FunctionCallbackInfo<Value>& args) {
+  // Environment 객체를 가져옵니다. 이 객체는 현재 스레드에 바인딩된 환경을 나타냅니다.
   Environment* env = Environment::GetCurrent(args);
+  // NodeArrayBufferAllocator 객체를 가져옵니다. 이 객체는 Node.js에서 사용되는 배열 버퍼 할당기를 나타냅니다.
   NodeArrayBufferAllocator* allocator = env->isolate_data()->node_allocator();
   Local<ArrayBuffer> ab;
   // It can be a nullptr when running inside an isolate where we
