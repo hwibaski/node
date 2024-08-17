@@ -3,6 +3,12 @@
 # Locate an acceptable Python interpreter and then re-execute the script.
 # Note that the mix of single and double quotes is intentional,
 # as is the fact that the ] goes on a new line.
+
+# 'exec' '/bin/sh' '-c' ''': 쉘 명령어 exec /bin/sh -c '''를 실행합니다.
+# exec: 현재 쉘을 새로 실행할 명령어로 대체합니다.
+# /bin/sh: 표준 쉘을 실행합니다.
+# -c: 다음에 오는 문자열을 쉘 명령어로 실행합니다.
+
 _=[ 'exec' '/bin/sh' '-c' '''
 command -v python3.13 >/dev/null && exec python3.13 "$0" "$@"
 command -v python3.12 >/dev/null && exec python3.12 "$0" "$@"
@@ -16,7 +22,15 @@ command -v python3 >/dev/null && exec python3 "$0" "$@"
 exec python "$0" "$@"
 ''' "$0" "$@"
 ]
-del _
+del _ # 변수 _를 삭제합니다.
+
+# command -v python3.13: 이 명령은 python3.13 명령어가 시스템에 존재하는지 확인
+# >/dev/null: 출력(반환된 경로)을 /dev/null로 보내서 무시합니다. 이 부분은 화면에 출력하지 않도록 하기 위함입니다.
+# && : 왼쪽 명령어가 성공적으로 실행되면 오른쪽 명령어를 실행합니다.
+# exec python3.13 "$0" "$@": 현재 스크립트를 python3.13 명령어로 대체하여 실행합니다.
+# "$0": 현재 스크립트의 이름을 의미합니다. 즉, 스크립트 자체를 다시 실행합니다.
+# "$@": 모든 명령줄 인수를 그대로 전달합니다.
+
 
 import sys
 try:
@@ -24,12 +38,12 @@ try:
 except ImportError:
   from distutils.spawn import find_executable as which
 
-print('Node.js configure: Found Python {}.{}.{}...'.format(*sys.version_info))
-acceptable_pythons = ((3, 13), (3, 12), (3, 11), (3, 10), (3, 9), (3, 8), (3, 7), (3, 6))
-if sys.version_info[:2] in acceptable_pythons:
-  import configure
+print('Node.js configure: Found Python {}.{}.{}...'.format(*sys.version_info)) # 현재 사용하는 파이썬 버전을 출력합니다.
+acceptable_pythons = ((3, 13), (3, 12), (3, 11), (3, 10), (3, 9), (3, 8), (3, 7), (3, 6)) # 허용되는 파이썬 버전을 튜플로 정의합니다.
+if sys.version_info[:2] in acceptable_pythons: # 현재 사용하는 파이썬 버전이 허용되는 버전 중 하나인지 확인합니다.
+  import configure # 현재 사용하는 파이썬 버전이 허용되는 버전 중 하나인 경우, configure 모듈을 가져옵니다.
 else:
-  python_cmds = ['python{}.{}'.format(*vers) for vers in acceptable_pythons]
+  python_cmds = ['python{}.{}'.format(*vers) for vers in acceptable_pythons] # 현재 사용하는 파이썬 버전이 허용되는 버전 중 하나가 아닌 경우, 허용되는 파이썬 버전을 표시합니다.
   sys.stderr.write('Please use {}.\n'.format(' or '.join(python_cmds)))
   for python_cmd in python_cmds:
       python_cmd_path = which(python_cmd)
